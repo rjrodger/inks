@@ -1,7 +1,7 @@
 # inks
 > Interpolate values from a shared context into a string template.
 
-Substitutes sections of a string marked with ````` by evaluating
+Substitutes sections of a string marked with ```` by evaluating
 contents. As a convenience, the values can be referenced from a
 context object.
 
@@ -17,7 +17,7 @@ context object.
 const Inks = require('inks')
 
 const context = { red: { foo: 1, bar: 'zed'}, green: { fizz: { buzz: 'FRED' }} }
-const template = 'Lorum `red:foo` ipsum `this.red.foo + this.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
+const template = 'Lorum `red:foo` ipsum `$.red.foo + $.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
 
 const result = Inks(template, context)
 
@@ -29,6 +29,7 @@ const result = Inks(template, context)
 ## Notes
 
 * Value reference syntax: `key:dot-path`.
+* General form: `<js-expression>` where `$ === context`.
 * Single values are not converted to a string and retain their type: `red:foo` -> `1` not `'1'`.
 * Anything that is not a number or string is converted to a string (if embedded) using `JSON.stringify`.
 
