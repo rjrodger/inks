@@ -28,7 +28,7 @@ const result = Inks(template, context)
 
 
 ## License
-Copyright (c) 2017, Richard Rodger and other contributors.
+Copyright (c) 2018, Richard Rodger and other contributors.
 Licensed under [MIT][].
 
 [MIT]: ./LICENSE
