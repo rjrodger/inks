@@ -1,6 +1,6 @@
 {
   "name": "inks",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Interpolate values from a shared context into a string template.",
   "main": "inks.js",
   "scripts": {
