@@ -1,0 +1,38 @@
+{
+  "name": "inks",
+  "version": "0.0.1",
+  "description": "Interpolate values from a shared context into a string template.",
+  "main": "inks.js",
+  "scripts": {
+    "test": "lab -P test -v -t 80 -I BigUint64Array,BigInt64Array,BigInt,URL,URLSearchParams",
+    "coveralls": "lab -s -P test -r lcov | coveralls",
+    "prettier": "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rjrodger/inks.git"
+  },
+  "keywords": [
+    "interpolate",
+    "string",
+    "template",
+    "backtick"
+  ],
+  "author": "Richard Rodger richardrodger.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rjrodger/inks/issues"
+  },
+  "homepage": "https://github.com/rjrodger/inks#readme",
+  "devDependencies": {
+    "code": "5",
+    "lab": "14",
+    "prettier": "1",
+    "coveralls": "3"
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "inks.js"
+  ]
+}
