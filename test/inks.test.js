@@ -22,20 +22,24 @@ describe('inks', function() {
   })
 
   it('readme', async () => {
-    var out = Inks('`foo:bar`', {foo:{bar:'zed'}}) 
+    var out = Inks('`foo:bar`', { foo: { bar: 'zed' } })
     expect(out).equal('zed')
-    
-    out = Inks({deep:'`foo:bar`'}, {foo:{bar:'zed'}}) 
-    expect(out).equal({deep:'zed'})
-    
-  out = Inks({deep:'`$.foo`'}, {foo:{bar:'zed'}}) 
-    expect(out).equal({deep:{bar:'zed'}})
-    
-    const context = { red: { foo: 1, bar: 'zed'}, green: { fizz: { buzz: 'FRED' }} }
-    const template = 'Lorem `red:foo` ipsum `$.red.foo + $.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
+
+    out = Inks({ deep: '`foo:bar`' }, { foo: { bar: 'zed' } })
+    expect(out).equal({ deep: 'zed' })
+
+    out = Inks({ deep: '`$.foo`' }, { foo: { bar: 'zed' } })
+    expect(out).equal({ deep: { bar: 'zed' } })
+
+    const context = {
+      red: { foo: 1, bar: 'zed' },
+      green: { fizz: { buzz: 'FRED' } }
+    }
+    const template =
+      'Lorem `red:foo` ipsum `$.red.foo + $.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
     const result = Inks(template, context)
-    
-    expect(result).equal("Lorem 1 ipsum 4 dolor FRED sit ` amet.")
+
+    expect(result).equal('Lorem 1 ipsum 4 dolor FRED sit ` amet.')
   })
 
   it('happy', async () => {
@@ -86,14 +90,16 @@ describe('inks', function() {
     var g = () => {}
     var b = Symbol('b')
 
-    var BigIntFunc = function(x) { return x }
-       
+    var BigIntFunc = function(x) {
+      return x
+    }
+
     expect(
       Inks(
         {
           a: '`$.x`',
           b: b,
-          c: ('function' === typeof(BigInt) ? BigInt : BigIntFunc)(1),
+          c: ('function' === typeof BigInt ? BigInt : BigIntFunc)(1),
           d: true,
           e: null,
           f: void 0,
@@ -104,7 +110,7 @@ describe('inks', function() {
     ).equal({
       a: 1,
       b: b,
-      c: ('function' === typeof(BigInt) ? BigInt : BigIntFunc)(1),
+      c: ('function' === typeof BigInt ? BigInt : BigIntFunc)(1),
       d: true,
       e: null,
       f: undefined,
