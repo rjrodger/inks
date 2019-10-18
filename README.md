@@ -1,14 +1,18 @@
 # inks
-> Interpolate values from a shared context into a string template.
+> Interpolate values from a shared context into a string template (or another object).
 
 Substitutes sections of a string marked with ```` by evaluating
 contents. As a convenience, the values can be referenced from a
 context object.
 
+Used by (seneca-msg-test)[github.com/senecajs/seneca-msg-test] to
+support back references to earlier test results.
+
 
 [![NPM][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
 [![Coveralls][coveralls-badge]][coveralls-url]
+
 
 ## Quick Example
 
@@ -16,8 +20,23 @@ context object.
 ```js
 const Inks = require('inks')
 
+var out = Inks('`foo:bar`', {foo:{bar:'zed'}}) 
+// out === 'zed'
+
+out = Inks({deep:'`foo:bar`'}, {foo:{bar:'zed'}}) 
+// out === {deep:'zed'}
+
+out = Inks({deep:'`$.foo`'}, {foo:{bar:'zed'}}) 
+// out === {deep:{bar:'zed'}}
+
+```
+
+
+Another example, where `$` references the context object.
+
+```
 const context = { red: { foo: 1, bar: 'zed'}, green: { fizz: { buzz: 'FRED' }} }
-const template = 'Lorum `red:foo` ipsum `$.red.foo + $.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
+const template = 'Lorem `red:foo` ipsum `$.red.foo + $.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
 
 const result = Inks(template, context)
 

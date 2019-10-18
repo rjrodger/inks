@@ -5,20 +5,59 @@
 'use strict';
 module.exports = Inks;
 function Inks(tm, ctxt) {
+    return walk(tm, make_modify_property(ctxt));
+}
+var walkers = {
+    'string': function (tm, modify_property) {
+        return modify_property(tm);
+    },
+    'object': function (tm, modify_property) {
+        if (null == tm)
+            return tm;
+        var obj = {};
+        Object.keys(tm).forEach(function (key) {
+            obj[key] = walk(tm[key], modify_property);
+        });
+        return obj;
+    },
+    'array': function (tm, modify_property) {
+        var arr = [];
+        for (var i = 0; i < tm.length; i++) {
+            arr.push(walk(tm[i], modify_property));
+        }
+        return arr;
+    },
+    'number': function (tm, modify_property) { return tm; },
+    'bigint': function (tm, modify_property) { return tm; },
+    'boolean': function (tm, modify_property) { return tm; },
+    'symbol': function (tm, modify_property) { return tm; },
+    'function': function (tm, modify_property) { return tm; },
+    'any': function (tm, modify_property) { return tm; }
+};
+function walk(tm, modify_property) {
+    var tm_t = Array.isArray(tm) ? 'array' : typeof (tm);
+    var walker = walkers[tm_t] || walkers.any;
+    return walker(tm, modify_property);
+}
+function make_modify_property(ctxt) {
+    return function modify_property(tm) {
+        return replace_values(tm, ctxt);
+    };
+}
+function replace_values(tm, ctxt) {
     tm = tm.replace(/\\`/g, '\x07');
-    //console.log('<<'+tm+'>>')
     var s = null;
     var m = null;
     var buf = [];
     var last = 0;
     while ((m = tm.substring(last).match(/(`.*?`)/))) {
         var cs = m[0].substring(1, m[0].length - 1);
-        //console.log('<'+cs+'>')
-        s = tm.substring(last, last + m.index);
+        var index = m.index;
+        s = tm.substring(last, last + index);
         if ('' !== s) {
             buf.push(s);
         }
-        last = last + m.index + m[0].length;
+        last = last + index + m[0].length;
         var csm = null;
         if ((csm = cs.match(/^([^:]+):(.*)$/))) {
             var key = csm[1];
