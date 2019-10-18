@@ -85,13 +85,15 @@ describe('inks', function() {
 
     var g = () => {}
     var b = Symbol('b')
-    
+
+    var BigIntFunc = function(x) { return x }
+       
     expect(
       Inks(
         {
           a: '`$.x`',
           b: b,
-          c: BigInt(1),
+          c: ('function' === typeof(BigInt) ? BigInt : BigIntFunc)(1),
           d: true,
           e: null,
           f: void 0,
@@ -102,7 +104,7 @@ describe('inks', function() {
     ).equal({
       a: 1,
       b: b,
-      c: BigInt(1),
+      c: ('function' === typeof(BigInt) ? BigInt : BigIntFunc)(1),
       d: true,
       e: null,
       f: undefined,
