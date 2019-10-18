@@ -5,7 +5,7 @@ Substitutes sections of a string marked with ```` by evaluating
 contents. As a convenience, the values can be referenced from a
 context object.
 
-Used by [seneca-msg-test](github.com/voxgig/seneca-msg-test) to
+Used by [seneca-msg-test](voxgig/seneca-msg-test) to
 support back references to earlier test results.
 
 
