@@ -17,7 +17,7 @@ describe('inks', function() {
     expect(Inks('`foo:a`', { foo: {} })).equal(null)
     expect(Inks('`foo:a`', { foo: { a: 'z' } })).equal('z')
     expect(Inks('`foo:a`', { foo: { a: 1 } })).equal(1)
-    expect(Inks('`foo:a`', { foo: { a: {x:1} } })).equal({x:1})
+    expect(Inks('`foo:a`', { foo: { a: { x: 1 } } })).equal({ x: 1 })
     expect(Inks('`foo:a`~`foo:b`', { foo: { a: 'z', b: 'y' } })).equal('z~y')
     expect(Inks('`foo:a`', { foo: { a: 1 } })).equal(1)
     expect(Inks('`foo:a`', { foo: { a: { b: 1 } } })).equal({ b: 1 })
