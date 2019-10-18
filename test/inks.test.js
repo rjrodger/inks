@@ -1,17 +1,26 @@
-/* Copyright (c) 2018 Richard Rodger and other contributors, MIT License */
+/* Copyright (c) 2018-2019 Richard Rodger and other contributors, MIT License */
 'use strict'
 
-var Inks = require('..')
+const Fs = require('fs')
 
-var Code = require('@hapi/code')
-var Lab = require('@hapi/lab')
+const Inks = require('..')
 
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var expect = Code.expect
+const Code = require('@hapi/code')
+const Lab = require('@hapi/lab')
+
+const lab = (exports.lab = Lab.script())
+const describe = lab.describe
+const it = lab.it
+const expect = Code.expect
 
 describe('inks', function() {
+  it('compiled', async () => {
+    expect(Fs.statSync(__dirname+'/../inks.ts').mtimeMs,
+           'TYPESCRIPT COMPILATION FAILED - SEE WATCH')
+      .below(Fs.statSync(__dirname+'/../inks.js').mtimeMs)
+    
+  })
+  
   it('happy', async () => {
     expect(Inks('`foo:a`')).equal(null)
     expect(Inks('`foo:a`', { foo: {} })).equal(null)
@@ -30,5 +39,9 @@ describe('inks', function() {
     expect(Inks('`1+1`')).equal(2)
     expect(Inks('`$.a`x`$.b`y`$.c`', { a: '', b: '', c: '' })).equal('xy')
     expect(Inks('q`$.a`x`$.b`y`$.c`w', { a: '', b: '', c: '' })).equal('qxyw')
+
+    // escaped string literals
+    expect(Inks('`"a"`')).equal('a')
+    expect(Inks('`"\\`a\\`"`')).equal('`a`')
   })
 })
