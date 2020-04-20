@@ -20,8 +20,9 @@ var walkers = {
     return modify_property(key, val)
   },
   object: function (key, val, modify_property, options) {
-    //if (null == val) return val
-    if (null == val || options.exclude(key, val)) return val
+    if (null == val || options.exclude(key, val)) {
+      return val
+    }
     var obj = {}
     Object.keys(val).forEach(function (key) {
       obj[key] = walk(key, val[key], modify_property, options)

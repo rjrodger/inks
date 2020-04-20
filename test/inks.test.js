@@ -121,14 +121,28 @@ describe('inks', function () {
   it('exclude', async () => {
     expect(
       Inks(
-        { a: 1, b: '`$.b`', c: '`$.c`', d: { e: '`$.e`' } },
+        {
+          a: 1,
+          b: '`$.b`',
+          c: '`$.c`',
+          d: { e: '`$.e`' },
+          f: null,
+          g: { h: '`$.h`' },
+        },
         { b: 2, c: 3, e: 4 },
         {
           exclude: (k, v) => {
-            return k === 'c' || k === 'e'
+            return k === 'c' || k === 'e' || !!v.h
           },
         }
       )
-    ).equal({ a: 1, b: 2, c: '`$.c`', d: { e: '`$.e`' } })
+    ).equal({
+      a: 1,
+      b: 2,
+      c: '`$.c`',
+      d: { e: '`$.e`' },
+      f: null,
+      g: { h: '`$.h`' },
+    })
   })
 })

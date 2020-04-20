@@ -32,8 +32,9 @@ let walkers: any = {
     modify_property: ModifyProperty,
     options: Options
   ) => {
-    //if (null == val) return val
-    if (null == val || options.exclude(key, val)) return val
+    if (null == val || options.exclude(key, val)) {
+      return val
+    }
 
     var obj: { [key: string]: any } = {}
 
