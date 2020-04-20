@@ -1,114 +1,126 @@
 /*
   MIT License,
-  Copyright (c) 2016-2018, Richard Rodger and other contributors.
+  Copyright (c) 2016-2020, Richard Rodger and other contributors.
 */
-'use strict'
-module.exports = Inks
-function Inks(tm, ctxt) {
-  return walk(tm, make_modify_property(ctxt))
+'use strict';
+module.exports = Inks;
+var default_options = {
+    exclude: function () { return false; }
+};
+function Inks(val, ctxt, options) {
+    if (options === void 0) { options = default_options; }
+    return walk('$', val, make_modify_property(ctxt, options), options);
 }
 var walkers = {
-  string: function(tm, modify_property) {
-    return modify_property(tm)
-  },
-  object: function(tm, modify_property) {
-    if (null == tm) return tm
-    var obj = {}
-    Object.keys(tm).forEach(function(key) {
-      obj[key] = walk(tm[key], modify_property)
-    })
-    return obj
-  },
-  array: function(tm, modify_property) {
-    var arr = []
-    for (var i = 0; i < tm.length; i++) {
-      arr.push(walk(tm[i], modify_property))
+    string: function (key, val, modify_property) {
+        return modify_property(key, val);
+    },
+    object: function (key, val, modify_property, options) {
+        //if (null == val) return val
+        if (null == val || options.exclude(key, val))
+            return val;
+        var obj = {};
+        Object.keys(val).forEach(function (key) {
+            obj[key] = walk(key, val[key], modify_property, options);
+        });
+        return obj;
+    },
+    array: function (key, val, modify_property, options) {
+        var arr = [];
+        for (var i = 0; i < val.length; i++) {
+            arr.push(walk('' + i, val[i], modify_property, options));
+        }
+        return arr;
+    },
+    number: function (key, val, modify_property) {
+        return val;
+    },
+    bigint: function (key, val, modify_property) {
+        return val;
+    },
+    boolean: function (key, val, modify_property) {
+        return val;
+    },
+    symbol: function (key, val, modify_property) {
+        return val;
+    },
+    "function": function (key, val, modify_property) {
+        return val;
+    },
+    any: function (key, val, modify_property) {
+        return val;
     }
-    return arr
-  },
-  number: function(tm, modify_property) {
-    return tm
-  },
-  bigint: function(tm, modify_property) {
-    return tm
-  },
-  boolean: function(tm, modify_property) {
-    return tm
-  },
-  symbol: function(tm, modify_property) {
-    return tm
-  },
-  function: function(tm, modify_property) {
-    return tm
-  },
-  any: function(tm, modify_property) {
-    return tm
-  }
+};
+function walk(key, val, modify_property, options) {
+    var val_t = Array.isArray(val) ? 'array' : typeof val;
+    var walker = walkers[val_t] || walkers.any;
+    return walker(key, val, modify_property, options);
 }
-function walk(tm, modify_property) {
-  var tm_t = Array.isArray(tm) ? 'array' : typeof tm
-  var walker = walkers[tm_t] || walkers.any
-  return walker(tm, modify_property)
-}
-function make_modify_property(ctxt) {
-  return function modify_property(tm) {
-    return replace_values(tm, ctxt)
-  }
+function make_modify_property(ctxt, options) {
+    return function modify_property(key, val) {
+        return options.exclude(key, val) ? val : replace_values(val, ctxt);
+        //return replace_values(val, ctxt)
+    };
 }
 function replace_values(tm, ctxt) {
-  tm = tm.replace(/\\`/g, '\x07')
-  var s = null
-  var m = null
-  var buf = []
-  var last = 0
-  while ((m = tm.substring(last).match(/(`.*?`)/))) {
-    var cs = m[0].substring(1, m[0].length - 1)
-    var index = m.index
-    s = tm.substring(last, last + index)
+    tm = tm.replace(/\\`/g, '\x07');
+    var s = null;
+    var m = null;
+    var buf = [];
+    var last = 0;
+    while ((m = tm.substring(last).match(/(`.*?`)/))) {
+        var cs = m[0].substring(1, m[0].length - 1);
+        var index = m.index;
+        s = tm.substring(last, last + index);
+        if ('' !== s) {
+            buf.push(s);
+        }
+        last = last + index + m[0].length;
+        var csm = null;
+        if ((csm = cs.match(/^([^:]+):(.*)$/))) {
+            var key = csm[1];
+            var path = csm[2];
+            var obj = ctxt && ctxt[key];
+            var val = null;
+            if ('object' === typeof obj) {
+                buf.push(handle_eval('$obj.' + path, obj, ctxt));
+            }
+            else {
+                buf.push(null);
+            }
+        }
+        else {
+            buf.push(handle_eval(cs, null, ctxt));
+        }
+    }
+    s = tm.substring(last, tm.length);
     if ('' !== s) {
-      buf.push(s)
+        buf.push(s);
     }
-    last = last + index + m[0].length
-    var csm = null
-    if ((csm = cs.match(/^([^:]+):(.*)$/))) {
-      var key = csm[1]
-      var path = csm[2]
-      var obj = ctxt && ctxt[key]
-      var val = null
-      if ('object' === typeof obj) {
-        buf.push(handle_eval('$obj.' + path, obj, ctxt))
-      } else {
-        buf.push(null)
-      }
-    } else {
-      buf.push(handle_eval(cs, null, ctxt))
+    var out = null;
+    // Preserve type if single value
+    if (1 === buf.length) {
+        out = buf[0];
     }
-  }
-  s = tm.substring(last, tm.length)
-  if ('' !== s) {
-    buf.push(s)
-  }
-  var out = null
-  // Preserve type if single value
-  if (1 === buf.length) {
-    out = buf[0]
-  } else {
-    buf = buf.map(function(x) {
-      if ('string' === typeof x || 'number' === typeof x) {
-        return x
-      } else return JSON.stringify(x)
-    })
-    out = buf.join('')
-  }
-  if ('string' === typeof out) {
-    out = out.replace(/\x07/g, '`')
-  }
-  return out
+    else {
+        buf = buf.map(function (x) {
+            if ('string' === typeof x || 'number' === typeof x) {
+                return x;
+            }
+            else
+                return JSON.stringify(x);
+        });
+        out = buf.join('');
+    }
+    if ('string' === typeof out) {
+        out = out.replace(/\x07/g, '`');
+    }
+    return out;
 }
 // NOTE: function arguments are used by `eval`!
 function handle_eval($vstr, $obj, $) {
-  var $val = null
-  eval('$val = ' + $vstr)
-  return null == $val ? null : $val
+    var $val = null;
+    eval('$val = ' + $vstr);
+    return null == $val ? null : $val;
 }
 //# sourceMappingURL=inks.js.map

@@ -1,72 +1,102 @@
 /*
   MIT License,
-  Copyright (c) 2016-2018, Richard Rodger and other contributors.
+  Copyright (c) 2016-2020, Richard Rodger and other contributors.
 */
 
 'use strict'
 
 module.exports = Inks
 
-function Inks(tm: any, ctxt: any) {
-  return walk(tm, make_modify_property(ctxt))
+
+interface Options {
+  exclude: (key: string, val: any) => boolean
+}
+
+type ModifyProperty = (key:string, val:string) => string
+
+const default_options = {
+  exclude: ()=>false
+}
+
+
+
+function Inks(val: any, ctxt: any, options: Options = default_options) {
+  return walk('$', val, make_modify_property(ctxt, options), options)
 }
 
 let walkers: any = {
-  string: (tm: string, modify_property: any) => {
-    return modify_property(tm)
+  string: (key: string, val: string, modify_property: ModifyProperty) => {
+    return modify_property(key, val)
   },
 
-  object: (tm: { [key: string]: any }, modify_property: any) => {
-    if (null == tm) return tm
-
+  object: (
+    key: string,
+    val: { [key: string]: any },
+    modify_property: ModifyProperty,
+    options: Options
+  ) => {
+    //if (null == val) return val
+    if (null == val || options.exclude(key,val)) return val
+    
     var obj: { [key: string]: any } = {}
 
-    Object.keys(tm).forEach(key => {
-      obj[key] = walk(tm[key], modify_property)
+    Object.keys(val).forEach(key => {
+      obj[key] = walk(key, val[key], modify_property, options)
     })
 
     return obj
   },
 
-  array: (tm: any[], modify_property: any) => {
+  array: (
+    key: string,
+    val: any[],
+    modify_property: ModifyProperty,
+    options: Options
+  ) => {
     var arr: any[] = []
 
-    for (var i = 0; i < tm.length; i++) {
-      arr.push(walk(tm[i], modify_property))
+    for (var i = 0; i < val.length; i++) {
+      arr.push(walk(''+i, val[i], modify_property, options))
     }
 
     return arr
   },
 
-  number: (tm: number, modify_property: any) => {
-    return tm
+  number: (key: string, val: number, modify_property: ModifyProperty) => {
+    return val
   },
-  bigint: (tm: bigint, modify_property: any) => {
-    return tm
+  bigint: (key: string, val: bigint, modify_property: ModifyProperty) => {
+    return val
   },
-  boolean: (tm: boolean, modify_property: any) => {
-    return tm
+  boolean: (key: string, val: boolean, modify_property: ModifyProperty) => {
+    return val
   },
-  symbol: (tm: symbol, modify_property: any) => {
-    return tm
+  symbol: (key: string, val: symbol, modify_property: ModifyProperty) => {
+    return val
   },
-  function: (tm: any, modify_property: any) => {
-    return tm
+  function: (key: string, val: any, modify_property: ModifyProperty) => {
+    return val
   },
-  any: (tm: any, modify_property: any) => {
-    return tm
+  any: (key: string, val: any, modify_property: ModifyProperty) => {
+    return val
   }
 }
 
-function walk(tm: any, modify_property: any): any {
-  let tm_t: string = Array.isArray(tm) ? 'array' : typeof tm
-  let walker: any = walkers[tm_t] || walkers.any
-  return walker(tm, modify_property)
+function walk(
+  key: string,
+  val: any,
+  modify_property: ModifyProperty,
+  options: Options
+): any {
+  let val_t: string = Array.isArray(val) ? 'array' : typeof val
+  let walker: any = walkers[val_t] || walkers.any
+  return walker(key, val, modify_property, options)
 }
 
-function make_modify_property(ctxt: any) {
-  return function modify_property(tm: string) {
-    return replace_values(tm, ctxt)
+function make_modify_property(ctxt: any, options: Options) {
+  return function modify_property(key: string, val: string) {
+    return options.exclude(key,val) ? val : replace_values(val, ctxt)
+    //return replace_values(val, ctxt)
   }
 }
 

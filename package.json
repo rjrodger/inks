@@ -32,12 +32,12 @@
   },
   "homepage": "https://github.com/rjrodger/inks#readme",
   "devDependencies": {
-    "@hapi/code": "^7.0.0",
-    "@hapi/lab": "^21.0.0",
-    "@types/node": "^12.11.7",
-    "coveralls": "^3.0.7",
-    "prettier": "^1.18.2",
-    "typescript": "^3.6.4"
+    "@hapi/code": "^8.0.1",
+    "@hapi/lab": "^22.0.4",
+    "@types/node": "^13.13.0",
+    "coveralls": "^3.0.11",
+    "prettier": "^2.0.4",
+    "typescript": "^3.8.3"
   },
   "files": [
     "README.md",

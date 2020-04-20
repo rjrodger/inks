@@ -117,4 +117,15 @@ describe('inks', function() {
       g: g
     })
   })
+
+  it('exclude', async () => {
+    expect(Inks(
+      {a:1,b:'`$.b`',c:'`$.c`',d:{e:'`$.e`'}},
+      {b:2,c:3,e:4}
+      ,{exclude:(k,v)=>{
+        return k==='c' || k==='e'
+      }}
+    )).equal({ a: 1, b: 2, c: '`$.c`', d: { e: '`$.e`' } })
+  })
+  
 })
