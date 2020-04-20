@@ -7,18 +7,15 @@
 
 module.exports = Inks
 
-
 interface Options {
   exclude: (key: string, val: any) => boolean
 }
 
-type ModifyProperty = (key:string, val:string) => string
+type ModifyProperty = (key: string, val: string) => string
 
 const default_options = {
-  exclude: ()=>false
+  exclude: () => false,
 }
-
-
 
 function Inks(val: any, ctxt: any, options: Options = default_options) {
   return walk('$', val, make_modify_property(ctxt, options), options)
@@ -36,11 +33,11 @@ let walkers: any = {
     options: Options
   ) => {
     //if (null == val) return val
-    if (null == val || options.exclude(key,val)) return val
-    
+    if (null == val || options.exclude(key, val)) return val
+
     var obj: { [key: string]: any } = {}
 
-    Object.keys(val).forEach(key => {
+    Object.keys(val).forEach((key) => {
       obj[key] = walk(key, val[key], modify_property, options)
     })
 
@@ -56,7 +53,7 @@ let walkers: any = {
     var arr: any[] = []
 
     for (var i = 0; i < val.length; i++) {
-      arr.push(walk(''+i, val[i], modify_property, options))
+      arr.push(walk('' + i, val[i], modify_property, options))
     }
 
     return arr
@@ -79,7 +76,7 @@ let walkers: any = {
   },
   any: (key: string, val: any, modify_property: ModifyProperty) => {
     return val
-  }
+  },
 }
 
 function walk(
@@ -95,7 +92,7 @@ function walk(
 
 function make_modify_property(ctxt: any, options: Options) {
   return function modify_property(key: string, val: string) {
-    return options.exclude(key,val) ? val : replace_values(val, ctxt)
+    return options.exclude(key, val) ? val : replace_values(val, ctxt)
     //return replace_values(val, ctxt)
   }
 }
@@ -146,7 +143,7 @@ function replace_values(tm: string, ctxt: any) {
   if (1 === buf.length) {
     out = buf[0]
   } else {
-    buf = buf.map(x => {
+    buf = buf.map((x) => {
       if ('string' === typeof x || 'number' === typeof x) {
         return x
       } else return JSON.stringify(x)

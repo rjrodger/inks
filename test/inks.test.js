@@ -1,4 +1,4 @@
-/* Copyright (c) 2018-2019 Richard Rodger and other contributors, MIT License */
+/* Copyright (c) 2018-2020 Richard Rodger and other contributors, MIT License */
 'use strict'
 
 const Fs = require('fs')
@@ -13,7 +13,7 @@ const describe = lab.describe
 const it = lab.it
 const expect = Code.expect
 
-describe('inks', function() {
+describe('inks', function () {
   it('compiled', async () => {
     expect(
       Fs.statSync(__dirname + '/../inks.ts').mtimeMs,
@@ -33,7 +33,7 @@ describe('inks', function() {
 
     const context = {
       red: { foo: 1, bar: 'zed' },
-      green: { fizz: { buzz: 'FRED' } }
+      green: { fizz: { buzz: 'FRED' } },
     }
     const template =
       'Lorem `red:foo` ipsum `$.red.foo + $.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
@@ -84,13 +84,13 @@ describe('inks', function() {
     expect(Inks(['s', { x: '`$.x`' }, { d: 1 }], c0)).equal([
       's',
       { x: 1 },
-      { d: 1 }
+      { d: 1 },
     ])
 
     var g = () => {}
     var b = Symbol('b')
 
-    var BigIntFunc = function(x) {
+    var BigIntFunc = function (x) {
       return x
     }
 
@@ -103,7 +103,7 @@ describe('inks', function() {
           d: true,
           e: null,
           f: void 0,
-          g: g
+          g: g,
         },
         c0
       )
@@ -114,18 +114,21 @@ describe('inks', function() {
       d: true,
       e: null,
       f: undefined,
-      g: g
+      g: g,
     })
   })
 
   it('exclude', async () => {
-    expect(Inks(
-      {a:1,b:'`$.b`',c:'`$.c`',d:{e:'`$.e`'}},
-      {b:2,c:3,e:4}
-      ,{exclude:(k,v)=>{
-        return k==='c' || k==='e'
-      }}
-    )).equal({ a: 1, b: 2, c: '`$.c`', d: { e: '`$.e`' } })
+    expect(
+      Inks(
+        { a: 1, b: '`$.b`', c: '`$.c`', d: { e: '`$.e`' } },
+        { b: 2, c: 3, e: 4 },
+        {
+          exclude: (k, v) => {
+            return k === 'c' || k === 'e'
+          },
+        }
+      )
+    ).equal({ a: 1, b: 2, c: '`$.c`', d: { e: '`$.e`' } })
   })
-  
 })
