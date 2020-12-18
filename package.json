@@ -36,6 +36,7 @@
     "@hapi/code": "^8.0.2",
     "@hapi/lab": "^24.1.0",
     "@types/node": "^14.14.14",
+    "browserify": "^17.0.0",
     "hapi-lab-shim": "0.0.2",
     "lab-transform-typescript": "^3.0.1",
     "prettier": "^2.2.1",
