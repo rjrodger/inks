@@ -6,12 +6,12 @@ module.exports = {
     es2020: true,
   },
   parserOptions: {
-    ecmaVersion: 8
+    ecmaVersion: 8,
   },
   rules: {
-    'no-console': 0
+    'no-console': 0,
   },
   globals: {
-    Promise: 'readonly'
-  }
+    Promise: 'readonly',
+  },
 }

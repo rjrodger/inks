@@ -5,7 +5,6 @@ const Fs = require('fs')
 
 const Inks = require('..')
 
-
 let Lab = require('@hapi/lab')
 Lab = null != Lab.script ? Lab : require('hapi-lab-shim')
 
@@ -18,7 +17,7 @@ const expect = Code.expect
 
 describe('inks', function () {
   it('compiled', async () => {
-    if('undefined' === typeof(window)) {
+    if ('undefined' === typeof window) {
       expect(
         Fs.statSync(__dirname + '/../inks.ts').mtimeMs,
         'TYPESCRIPT COMPILATION FAILED - SEE WATCH'

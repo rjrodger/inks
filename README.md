@@ -56,9 +56,12 @@ const result = Inks(template, context)
 * General form: `<js-expression>` where `$ === context`.
 * Single values are not converted to a string and retain their type: `red:foo` -> `1` not `'1'`.
 * Anything that is not a number or string is converted to a string (if embedded) using `JSON.stringify`.
-* Escape backticks by prefixing with a backslash: ```
+* Escape backticks by prefixing with a backslash: 
+
+```
 'a\\`b' -> 'a`b'
 ```
+
 
 ## Questions?
 

@@ -1,6 +1,6 @@
 {
   "name": "inks",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Interpolate values from a shared context into a string template.",
   "main": "dist/inks.js",
   "browser": "dist/inks.min.js",
@@ -14,7 +14,8 @@
     "clean": "rm -rf node_modules yarn.lock package-lock.json",
     "reset": "npm run clean && npm i && npm run build && npm test",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"`; echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
-    "repo-publish": "npm run clean && npm i && npm run build && npm run prettier && npm test && npm run test-web && npm run repo-tag && npm publish --registry http://registry.npmjs.org"
+    "repo-publish-quick": "npm run prettier && npm run build && npm test && npm run test-web && npm run repo-tag && npm publish --registry http://registry.npmjs.org",
+    "repo-publish": "npm run clean && npm i && npm run repo-publish-quick"
   },
   "repository": {
     "type": "git",
