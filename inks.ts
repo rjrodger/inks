@@ -5,6 +5,9 @@
 
 'use strict'
 
+
+// TODO: support ternary expressions
+
 module.exports = Inks
 
 interface Options {

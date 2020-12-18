@@ -5,8 +5,11 @@ const Fs = require('fs')
 
 const Inks = require('..')
 
+
+let Lab = require('@hapi/lab')
+Lab = null != Lab.script ? Lab : require('hapi-lab-shim')
+
 const Code = require('@hapi/code')
-const Lab = require('@hapi/lab')
 
 const lab = (exports.lab = Lab.script())
 const describe = lab.describe
@@ -15,10 +18,12 @@ const expect = Code.expect
 
 describe('inks', function () {
   it('compiled', async () => {
-    expect(
-      Fs.statSync(__dirname + '/../inks.ts').mtimeMs,
-      'TYPESCRIPT COMPILATION FAILED - SEE WATCH'
-    ).most(Fs.statSync(__dirname + '/../inks.js').mtimeMs)
+    if('undefined' === typeof(window)) {
+      expect(
+        Fs.statSync(__dirname + '/../inks.ts').mtimeMs,
+        'TYPESCRIPT COMPILATION FAILED - SEE WATCH'
+      ).most(Fs.statSync(__dirname + '/../dist/inks.js').mtimeMs)
+    }
   })
 
   it('readme', async () => {

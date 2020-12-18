@@ -10,7 +10,7 @@ support back references to earlier test results.
 
 
 [![NPM][npm-badge]][npm-url]
-[![Build Status][travis-badge]][travis-url]
+[!![Build](https://github.com/senecajs/seneca-entity-depend/workflows/build/badge.svg)](https://github.com/senecajs/seneca-entity-depend/actions?query=workflow%3Abuild)
 [![Coveralls][coveralls-badge]][coveralls-url]
 
 
@@ -51,7 +51,9 @@ const result = Inks(template, context)
 * General form: `<js-expression>` where `$ === context`.
 * Single values are not converted to a string and retain their type: `red:foo` -> `1` not `'1'`.
 * Anything that is not a number or string is converted to a string (if embedded) using `JSON.stringify`.
-
+* Escape backticks by prefixing with a backslash: ```
+'a\\`b' -> 'a`b'
+```
 
 ## Questions?
 
@@ -59,14 +61,12 @@ const result = Inks(template, context)
 
 
 ## License
-Copyright (c) 2018, Richard Rodger and other contributors.
+Copyright (c) 2018-2020, Richard Rodger and other contributors.
 Licensed under [MIT][].
 
 [MIT]: ./LICENSE
 [npm-badge]: https://badge.fury.io/js/inks.svg
 [npm-url]: https://badge.fury.io/js/inks
-[travis-badge]: https://travis-ci.org/rjrodger/inks.svg
-[travis-url]: https://travis-ci.org/rjrodger/inks
 [coveralls-badge]: https://coveralls.io/repos/rjrodger/inks/badge.svg?branch=master&service=github
 [coveralls-url]: https://coveralls.io/github/rjrodger/inks?branch=master
 
