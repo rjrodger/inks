@@ -9,8 +9,8 @@ Used by [seneca-msg-test](//github.com/voxgig/seneca-msg-test) to
 support back references to earlier test results.
 
 
-[![NPM][npm-badge]][npm-url]
-[![Build](https://github.com/senecajs/seneca-entity-depend/workflows/build/badge.svg)](https://github.com/senecajs/seneca-entity-depend/actions?query=workflow%3Abuild)
+[![NpmVersion][npm-badge]][npm-url]
+[![Build](https://github.com//workflows/build/badge.svg)](https://github.com/rjodger/inks/actions?query=workflow%3Abuild)
 [![Coveralls][coveralls-badge]][coveralls-url]
 [![DeepScan grade](https://deepscan.io/api/teams/5016/projects/11422/branches/169909/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=11422&bid=169909)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9475388ccbff2f0b6860/maintainability)](https://codeclimate.com/github/rjrodger/inks/maintainability)
