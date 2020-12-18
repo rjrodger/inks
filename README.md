@@ -9,9 +9,9 @@ Used by [seneca-msg-test](//github.com/voxgig/seneca-msg-test) to
 support back references to earlier test results.
 
 
-[![NpmVersion][npm-badge]][npm-url]
-[![Build](https://github.com//workflows/build/badge.svg)](https://github.com/rjodger/inks/actions?query=workflow%3Abuild)
-[![Coveralls][coveralls-badge]][coveralls-url]
+[![npm version](https://badge.fury.io/js/inks.svg)](https://badge.fury.io/js/inks)
+[!![Build](https://github.com/rjrodger/inks/workflows/build/badge.svg)](https://github.com/rjrodger/inks/actions?query=workflow%3Abuild)
+[![Coverage Status](https://coveralls.io/repos/github/rjrodger/inks/badge.svg?branch=main)](https://coveralls.io/github/rjrodger/inks?branch=main)
 [![DeepScan grade](https://deepscan.io/api/teams/5016/projects/11422/branches/169909/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=11422&bid=169909)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9475388ccbff2f0b6860/maintainability)](https://codeclimate.com/github/rjrodger/inks/maintainability)
 
@@ -68,10 +68,5 @@ Copyright (c) 2018-2020, Richard Rodger and other contributors.
 Licensed under [MIT][].
 
 [MIT]: ./LICENSE
-[npm-badge]: https://badge.fury.io/js/inks.svg
-[npm-url]: https://badge.fury.io/js/inks
-[coveralls-badge]: https://coveralls.io/repos/rjrodger/inks/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/rjrodger/inks?branch=master
-
 
 
