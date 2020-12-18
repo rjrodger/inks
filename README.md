@@ -10,10 +10,12 @@ support back references to earlier test results.
 
 
 [![npm version](https://badge.fury.io/js/inks.svg)](https://badge.fury.io/js/inks)
-[!![Build](https://github.com/rjrodger/inks/workflows/build/badge.svg)](https://github.com/rjrodger/inks/actions?query=workflow%3Abuild)
+[![Build](https://github.com/rjrodger/inks/workflows/build/badge.svg)](https://github.com/rjrodger/inks/actions?query=workflow%3Abuild)
 [![Coverage Status](https://coveralls.io/repos/github/rjrodger/inks/badge.svg?branch=main)](https://coveralls.io/github/rjrodger/inks?branch=main)
 [![DeepScan grade](https://deepscan.io/api/teams/5016/projects/11422/branches/169909/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=11422&bid=169909)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9475388ccbff2f0b6860/maintainability)](https://codeclimate.com/github/rjrodger/inks/maintainability)
+[![Dependency Status][https://david-dm.org/rjrodger/inks.svg]][https://david-dm.org/rjrodger/inks]
+
 
 
 
