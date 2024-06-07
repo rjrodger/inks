@@ -5,7 +5,7 @@
 
 'use strict'
 
-// TODO: support ternary expressions
+import { reach, escapeRegex } from '@hapi/hoek'
 
 module.exports = Inks
 
@@ -32,7 +32,7 @@ let walkers: any = {
     key: string,
     val: { [key: string]: any },
     modify_property: ModifyProperty,
-    options: Options
+    options: Options,
   ) => {
     if (null == val || options.exclude(key, val)) {
       return val
@@ -51,7 +51,7 @@ let walkers: any = {
     key: string,
     val: any[],
     modify_property: ModifyProperty,
-    options: Options
+    options: Options,
   ) => {
     var arr: any[] = []
 
@@ -86,7 +86,7 @@ function walk(
   key: string,
   val: any,
   modify_property: ModifyProperty,
-  options: Options
+  options: Options,
 ): any {
   let val_t: string = Array.isArray(val) ? 'array' : typeof val
   let walker: any = walkers[val_t] || walkers.any
@@ -96,7 +96,6 @@ function walk(
 function make_modify_property(ctxt: any, options: Options) {
   return function modify_property(key: string, val: string) {
     return options.exclude(key, val) ? val : replace_values(val, ctxt)
-    //return replace_values(val, ctxt)
   }
 }
 
@@ -119,21 +118,7 @@ function replace_values(tm: string, ctxt: any) {
 
     last = last + index + m[0].length
 
-    var csm = null
-    if ((csm = cs.match(/^([^:]+):(.*)$/))) {
-      var key = csm[1]
-      var path = csm[2]
-      var obj = ctxt && ctxt[key]
-      var val = null
-
-      if ('object' === typeof obj) {
-        buf.push(handle_eval('$obj.' + path, obj, ctxt))
-      } else {
-        buf.push(null)
-      }
-    } else {
-      buf.push(handle_eval(cs, null, ctxt))
-    }
+    buf.push(evaluate(cs, ctxt))
   }
   s = tm.substring(last, tm.length)
   if ('' !== s) {
@@ -161,11 +146,37 @@ function replace_values(tm: string, ctxt: any) {
   return out
 }
 
-// NOTE: function arguments are used by `eval`!
-function handle_eval($vstr: string, $obj: object | null, $: object): any {
-  var $val = null
+function evaluate(cs: string, ctxt: any, flags?: { sep?: string }) {
+  var csm = null
+  let re = /^([^:]+):([^:]*)/
+  if (flags && flags.sep) {
+    let sep = escapeRegex(flags.sep[0] || ':')
+    re = new RegExp('^([^' + sep + ']+)' + sep + '([^' + sep + ']*)')
+  }
 
-  eval('$val = ' + $vstr)
+  // console.log('RE', re)
 
-  return null == $val ? null : $val
+  if ((csm = cs.match(re))) {
+    // console.log('M', cs, csm)
+    var key = csm[1]
+    var path = csm[2]
+    var obj = ctxt && ctxt[key]
+    // var val = null
+
+    if ('object' === typeof obj) {
+      return '' === path ? obj : resolve(path, obj)
+    } else {
+      return null
+    }
+  } else {
+    return resolve(cs, { $: ctxt })
+  }
 }
+
+function resolve(path: string, obj: object): any {
+  let out = reach(obj, path)
+  out = undefined === out ? null : out
+  return out
+}
+
+Object.assign(Inks, { evaluate })

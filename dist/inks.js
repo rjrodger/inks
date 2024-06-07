@@ -3,7 +3,8 @@
   Copyright (c) 2016-2020, Richard Rodger and other contributors.
 */
 'use strict';
-// TODO: support ternary expressions
+Object.defineProperty(exports, "__esModule", { value: true });
+const hoek_1 = require("@hapi/hoek");
 module.exports = Inks;
 const default_options = {
     exclude: () => false,
@@ -59,7 +60,6 @@ function walk(key, val, modify_property, options) {
 function make_modify_property(ctxt, options) {
     return function modify_property(key, val) {
         return options.exclude(key, val) ? val : replace_values(val, ctxt);
-        //return replace_values(val, ctxt)
     };
 }
 function replace_values(tm, ctxt) {
@@ -76,22 +76,7 @@ function replace_values(tm, ctxt) {
             buf.push(s);
         }
         last = last + index + m[0].length;
-        var csm = null;
-        if ((csm = cs.match(/^([^:]+):(.*)$/))) {
-            var key = csm[1];
-            var path = csm[2];
-            var obj = ctxt && ctxt[key];
-            var val = null;
-            if ('object' === typeof obj) {
-                buf.push(handle_eval('$obj.' + path, obj, ctxt));
-            }
-            else {
-                buf.push(null);
-            }
-        }
-        else {
-            buf.push(handle_eval(cs, null, ctxt));
-        }
+        buf.push(evaluate(cs, ctxt));
     }
     s = tm.substring(last, tm.length);
     if ('' !== s) {
@@ -117,10 +102,35 @@ function replace_values(tm, ctxt) {
     }
     return out;
 }
-// NOTE: function arguments are used by `eval`!
-function handle_eval($vstr, $obj, $) {
-    var $val = null;
-    eval('$val = ' + $vstr);
-    return null == $val ? null : $val;
+function evaluate(cs, ctxt, flags) {
+    var csm = null;
+    let re = /^([^:]+):([^:]*)/;
+    if (flags && flags.sep) {
+        let sep = (0, hoek_1.escapeRegex)(flags.sep[0] || ':');
+        re = new RegExp('^([^' + sep + ']+)' + sep + '([^' + sep + ']*)');
+    }
+    // console.log('RE', re)
+    if ((csm = cs.match(re))) {
+        // console.log('M', cs, csm)
+        var key = csm[1];
+        var path = csm[2];
+        var obj = ctxt && ctxt[key];
+        // var val = null
+        if ('object' === typeof obj) {
+            return '' === path ? obj : resolve(path, obj);
+        }
+        else {
+            return null;
+        }
+    }
+    else {
+        return resolve(cs, { $: ctxt });
+    }
 }
+function resolve(path, obj) {
+    let out = (0, hoek_1.reach)(obj, path);
+    out = undefined === out ? null : out;
+    return out;
+}
+Object.assign(Inks, { evaluate });
 //# sourceMappingURL=inks.js.map

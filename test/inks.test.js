@@ -20,7 +20,7 @@ describe('inks', function () {
     if ('undefined' === typeof window) {
       expect(
         Fs.statSync(__dirname + '/../inks.ts').mtimeMs,
-        'TYPESCRIPT COMPILATION FAILED - SEE WATCH'
+        'TYPESCRIPT COMPILATION FAILED - SEE WATCH',
       ).most(Fs.statSync(__dirname + '/../dist/inks.js').mtimeMs)
     }
   })
@@ -40,10 +40,10 @@ describe('inks', function () {
       green: { fizz: { buzz: 'FRED' } },
     }
     const template =
-      'Lorem `red:foo` ipsum `$.red.foo + $.red.bar.length` dolor `green:fizz.buzz` sit \\` amet.'
+      'Lorem `red:foo` ipsum `$.red.bar` dolor `green:fizz.buzz` sit \\` amet.'
     const result = Inks(template, context)
 
-    expect(result).equal('Lorem 1 ipsum 4 dolor FRED sit ` amet.')
+    expect(result).equal('Lorem 1 ipsum zed dolor FRED sit ` amet.')
   })
 
   it('happy', async () => {
@@ -64,14 +64,14 @@ describe('inks', function () {
     expect(Inks('|`foo:a`|', { foo: { a: 9 } })).equal('|9|')
     expect(Inks('`bar:a`', { foo: { a: 1 } })).equal(null)
     expect(Inks('`foo:b`', { foo: { a: 1 } })).equal(null)
-    expect(Inks('`1+1`', {})).equal(2)
-    expect(Inks('`1+1`')).equal(2)
+    // expect(Inks('`1+1`', {})).equal(2)
+    // expect(Inks('`1+1`')).equal(2)
     expect(Inks('`$.a`x`$.b`y`$.c`', { a: '', b: '', c: '' })).equal('xy')
     expect(Inks('q`$.a`x`$.b`y`$.c`w', { a: '', b: '', c: '' })).equal('qxyw')
 
     // escaped string literals
-    expect(Inks('`"a"`')).equal('a')
-    expect(Inks('`"\\`a\\`"`')).equal('`a`')
+    // expect(Inks('`"a"`')).equal('a')
+    // expect(Inks('`"\\`a\\`"`')).equal('`a`')
   })
 
   it('walk', async () => {
@@ -109,8 +109,8 @@ describe('inks', function () {
           f: void 0,
           g: g,
         },
-        c0
-      )
+        c0,
+      ),
     ).equal({
       a: 1,
       b: b,
@@ -138,8 +138,8 @@ describe('inks', function () {
           exclude: (k, v) => {
             return k === 'c' || k === 'e' || !!v.h
           },
-        }
-      )
+        },
+      ),
     ).equal({
       a: 1,
       b: 2,
@@ -148,5 +148,20 @@ describe('inks', function () {
       f: null,
       g: { h: '`$.h`' },
     })
+  })
+
+  it('evaluate', () => {
+    expect(Inks.evaluate('a:b', { a: { b: 1 } })).equal(1)
+    expect(Inks.evaluate('a~b', { a: { b: 1 } }, { sep: '~' })).equal(1)
+    expect(Inks.evaluate('a~b~Number', { a: { b: 1 } }, { sep: '~' })).equal(1)
+    expect(Inks.evaluate('a~', { a: { b: 1 } }, { sep: '~' })).equal({ b: 1 })
+
+    expect(
+      Inks.evaluate(
+        'a~b.c~Exact("A","B")',
+        { a: { b: { c: 1 } } },
+        { sep: '~' },
+      ),
+    ).equal(1)
   })
 })
